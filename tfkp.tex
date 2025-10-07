@@ -1,0 +1,252 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{geometry}
+\usepackage{minted}
+\usepackage{graphicx}
+\geometry{top=2cm,bottom=2cm,left=2.5cm,right=2.5cm}
+\begin{document}
+
+\begin{center}
+\textbf{Федеральное государственное автономное образовательное учреждение высшего образования}\\
+\textbf{<<НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ 
+УНИВЕРСИТЕТ ИТМО
+>>}\\[0.5em]
+Факультет программной инженерии и компьютерной техники (ПИиКТ)\\
+\end{center}
+
+\vspace{7cm}
+
+\begin{center}
+\textbf{Теория функций комплексных переменных}\\[0.5em]
+Лабораторная работа № 1\\[0.5em]
+\end{center}
+
+\vfill
+
+\hfill
+\begin{minipage}{0.95\textwidth}
+Выполнили\\
+Макаров Матвей\\
+Красногорский Тимофей\\[1em]
+Преподаватель: Краснов Александр Юрьевич
+\end{minipage}
+
+\vspace{1cm}
+
+\begin{center}
+г. Санкт-Петербург\\
+2025 г. 
+\end{center}
+\pagebreak
+
+\begin{center}
+    \textbf{Задание 1}
+\end{center}
+
+Доказательство свойства 1
+
+Доказать: Множество переходит само в себя при сопряжении. \newline
+
+Рассмотрим последовательности: \newline
+         $z_{n+1} = z_n² + c, z₀ = 0$ \newline
+         $w_{n+1} = w_n² + c̄, w₀ = 0$ \newline
+         
+По математической индукции: \newline
+1. База. n = 0 \newline
+ $z_0 = 0$ \newline
+\ $w_0 = 0 = \overline{0}=\overline{z_0}$ \newline
+2. Предположение. n = k \newline
+ \ $ w_n = \overline{z_n}$ \newline
+3. Шаг. $n = k+1$ \newline
+\ $w_{k+1}=\overline{z_{k+1}}=\overline{z_{n}^2+c}=\overline{z_n}^2+\overline{c}=w_n^2+\overline{c}$ \newline
+
+Тогда для всех n выполняется $|w_n|=|z_n|$. Значит, если последовательность $z_n$ ограничена при $c \in M$ (по определению), то $w_n$ тоже ограничена, откуда $\overline{c} \in M$. Тогда множество Мандельброта симметрично относительно вещественной оси. \newline
+
+Доказательство свойства 2 \newline
+Доказать, что $\forall c \in C: |c|>2 \leftrightarrow  c \notin M$ \newline
+Определение ограниченность $z_n$: \newline
+$\exists R > 0 : \forall n \in N, |z_n| \leq R$ \newline
+Возьмем произвольный c : c > 2. \newline
+$|z_{n+1}|=|z_n^2+c|\geq|z_n|^2-|c|$ \newline
+
+По математической индукции: \newline
+1. База. Пусть n = 1, тогда $|z_1|=|c|, |c|>2$. \newline
+$|z_2|\geq|z_1|^2-|c|$ \newline
+$|z_2|\geq |c|^2 -|c|$ \newline
+$[|c|-1 >1]$ \newline
+$|z_2|>|c|$ \newline
+$|z_2|>2$ \newline
+2. Предположение. При n = k \newline
+$|z_{k+1}|>|z_k|$ \newline
+3. Шаг.  \newline
+$|z_{k+1}|\geq |z_k|^2-|z_k|$ \newline
+$|z_k|-1>1$ \newline
+$|z_{k+1}|>|z_k|$ \newline
+
+Значит, при любом n выполняется $|z_{n+1}|>|z_n|$, тогда при $n\rightarrow \infty$ и |c|>2 $z_n$ не ограничена.    \newline
+
+\newpage
+
+\begin{center}
+    \textbf{Задание 2}
+\end{center}
+Программа для изображения множества Мандельброта.
+
+\begin{minted}[frame=single,fontsize=\small,linenos]{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+def mandelbrot_set(xmin, xmax, ymin, ymax, width, height, max_iter):
+    x = np.linspace(xmin, xmax, width)
+    y = np.linspace(ymin, ymax, height)
+    X, Y = np.meshgrid(x, y)
+    C = X + Y * 1j
+
+    mandelbrot = np.zeros(C.shape, dtype=int)
+    Z = np.zeros(C.shape, dtype=complex)
+
+    for i in range(max_iter):
+        mask = np.abs(Z) <= 2
+        Z[mask] = Z[mask] * Z[mask] + C[mask]
+        mandelbrot[mask] = i
+
+    mandelbrot[np.abs(Z) <= 2] = max_iter
+    return mandelbrot
+
+def plot_mandelbrot(xmin, xmax, ymin, ymax, width=800, height=800, max_iter=100):
+    mandelbrot = mandelbrot_set(xmin, xmax, ymin, ymax, width, height, max_iter)
+
+    plt.figure(figsize=(10, 8))
+    plt.imshow(mandelbrot, extent=[xmin, xmax, ymin, ymax], cmap='magma', origin='lower')
+    plt.colorbar(label='Итерации')
+    plt.title('Множество Мандельброта')
+    plt.tight_layout()
+    plt.show()
+
+if __name__ == "__main__":
+    xmin, xmax = -0.748, -0.747
+    ymin, ymax = 0.102, 0.103
+    max_iter = 2000
+    plot_mandelbrot(xmin, xmax, ymin, ymax, max_iter=max_iter)
+\end{minted}
+
+\newpage
+
+\begin{center}
+    \textbf{Результаты для множества Мандельброта}
+\end{center}
+
+1. Стандартный вид
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{photo_2025-10-08_01-45-24.jpg}
+    \caption{Множество Мандельброта: стандартный вид \\ xmin, xmax = -2.0, 1.0 \\ ymin, ymax = -1.5, 1.5}
+    \label{fig:mandel1}
+\end{figure}
+
+\newpage
+
+2. Спирали
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{photo_2025-10-08_01-44-04.jpg}
+    \caption{Множество Мандельброта: спирали \\ xmin, xmax = 0.275, 0.285 \\ ymin, ymax = 0.005, 0.015}
+    \label{fig:mandel2}
+\end{figure}
+
+\newpage
+
+3. Морской конек
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{photo_2025-10-08_01-50-27.jpg}
+    \caption{Множество Мандельброта: морской конек \\ xmin, xmax = -0.748, -0.747 \\ ymin, ymax = 0.102, 0.103}
+    \label{fig:mandel3}
+\end{figure}
+
+\newpage
+
+\begin{center}
+    \textbf{Задание 3}
+\end{center}
+
+\begin{minted}[frame=single,fontsize=\small,linenos]{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+def julia_set(c, xmin, xmax, ymin, ymax, width, height, max_iter):
+    x = np.linspace(xmin, xmax, width)
+    y = np.linspace(ymin, ymax, height)
+    X, Y = np.meshgrid(x, y)
+    Z = X + Y * 1j
+
+    julia = np.zeros(Z.shape, dtype=int)
+
+    for i in range(max_iter):
+        mask = np.abs(Z) <= 2
+        Z[mask] = Z[mask] * Z[mask] + c
+        julia[mask] = i
+
+    julia[np.abs(Z) <= 2] = max_iter
+    return julia
+
+def plot_julia(c, xmin, xmax, ymin, ymax, width=800, height=800, max_iter=100):
+    julia = julia_set(c, xmin, xmax, ymin, ymax, width, height, max_iter)
+
+    plt.figure(figsize=(10, 8))
+    plt.imshow(julia, extent=[xmin, xmax, ymin, ymax], cmap='magma', origin='lower')
+    plt.colorbar(label='Итерации')
+    plt.title(f'Множество Жюлиа для c = {c}')
+    plt.tight_layout()
+    plt.show()
+
+if __name__ == "__main__":
+    c = -0.8j
+    xmin, xmax = -1.5, 1.5
+    ymin, ymax = -1.5, 1.5
+    max_iter = 300
+    plot_julia(c, xmin, xmax, ymin, ymax, max_iter=max_iter)
+\end{minted}
+
+\newpage
+
+\begin{center}
+    \textbf{Результаты для множества Жюлиа}
+\end{center}
+
+1. Множество Жюлиа для c = -0.7 + 0.27015j
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{photo_2025-10-08_01-58-15.jpg}
+    \caption{Множество Жюлиа для c = -0.7 + 0.27015j \\ xmin, xmax = -1.5, 1.5 \\ ymin, ymax = -1.5, 1.5}
+    \label{fig:julia1}
+\end{figure}
+
+\newpage
+
+2. Множество Жюлиа для c = -0.4 + 0.6j
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{photo_2025-10-08_01-58-49.jpg}
+    \caption{Множество Жюлиа для c = -0.4 + 0.6j \\ xmin, xmax = -1.5, 1.5 \\ ymin, ymax = -1.5, 1.5}
+    \label{fig:julia2}
+\end{figure}
+
+\newpage
+
+3. Множество Жюлиа для c = -0.8j
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{photo_2025-10-08_02-00-36.jpg}
+    \caption{Множество Жюлиа для c = -0.8j \\ xmin, xmax = -1.5, 1.5 \\ ymin, ymax = -1.5, 1.5}
+    \label{fig:julia3}
+\end{figure}
+
+\end{document}
